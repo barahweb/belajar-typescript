@@ -154,37 +154,40 @@ export class ItemController {
         }
     }
 
-    // // DELETE /items/:id - Delete item
-    // static deleteItem(req: Request, res: Response): Response {
-    //     try {
-    //         const { id } = req.params;
+    // DELETE /items/:id - Delete item
+    static async deleteItem(req: Request, res: Response): Promise<Response> {
+        try {
+            const { id } = req.params;
 
-    //         const itemIndex = items.findIndex(i => i.id === id);
+            const itemIndex = await db.update(productsTable)
+                .set({
+                    isDeleted: true,
+                    deletedAt: new Date() // Set the deletion timestamp
+                })
+                .where(eq(productsTable.id, Number(id)))
+                .returning();
 
-    //         if (itemIndex === -1) {
-    //             return res.status(404).json({
-    //                 success: false,
-    //                 error: `Item with id ${id} not found`
-    //             });
-    //         }
+            if (itemIndex.length === 0) {
+                return res.status(404).json({
+                    success: false,
+                    error: `Item with id ${id} not found`
+                });
+            }
 
-    //         // Remove item from array
-    //         const [deletedItem] = items.splice(itemIndex, 1);
+            return res.json({
+                success: true,
+                message: 'Item deleted successfully',
+                data: itemIndex
+            });
 
-    //         return res.json({
-    //             success: true,
-    //             message: 'Item deleted successfully',
-    //             data: deletedItem
-    //         });
-
-    //     } catch (error) {
-    //         console.error('Delete item error:', error);
-    //         return res.status(500).json({
-    //             success: false,
-    //             error: 'Failed to delete item'
-    //         });
-    //     }
-    // }
+        } catch (error) {
+            console.error('Delete item error:', error);
+            return res.status(500).json({
+                success: false,
+                error: 'Failed to delete item'
+            });
+        }
+    }
 
     // // GET /items/search?q= - Search items
     // static searchItems(req: Request, res: Response): Response {

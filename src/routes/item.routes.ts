@@ -10,6 +10,6 @@ router.get('/', ItemController.getAllItems);        // GET /items
 router.get('/:id', ItemController.getItemById);     // GET /items/:id
 router.post('/', ItemController.createItem);        // POST /items
 router.put('/:id', ItemController.updateItem);      // PUT /items/:id
-// router.delete('/:id', ItemController.deleteItem);   // DELETE /items/:id
+router.delete('/:id', ItemController.deleteItem);   // DELETE /items/:id
 
 export default router;
