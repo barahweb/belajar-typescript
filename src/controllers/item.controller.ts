@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { Request, Response } from 'express';
 import { z, ZodError } from 'zod';
 import { drizzle } from 'drizzle-orm/node-postgres';
-import { desc, eq, asc } from 'drizzle-orm';
+import { desc, eq, asc, like, or, and } from 'drizzle-orm';
 import { productsTable, usersTable } from '../db/schema';
 
 const db = drizzle(process.env.DATABASE_URL!);
@@ -189,38 +189,48 @@ export class ItemController {
         }
     }
 
-    // // GET /items/search?q= - Search items
-    // static searchItems(req: Request, res: Response): Response {
-    //     try {
-    //         const { q } = req.query;
+    // GET /items/search?q= - Search items
+    static async searchItems(req: Request, res: Response): Promise<Response> {
+        try {
+            const { q } = req.query;
 
-    //         if (!q || typeof q !== 'string') {
-    //             return res.status(400).json({
-    //                 success: false,
-    //                 error: 'Search query is required'
-    //             });
-    //         }
+            if (!q || typeof q !== 'string') {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Search query is required or should be a string'
+                });
+            }
 
-    //         const searchTerm = q.toLowerCase();
-    //         const results = items.filter(item =>
-    //             item.name.toLowerCase().includes(searchTerm) ||
-    //             item.description?.toLowerCase().includes(searchTerm)
-    //         );
+            // const results = items.filter(item =>
+            //     item.name.toLowerCase().includes(searchTerm) ||
+            //     item.description?.toLowerCase().includes(searchTerm)
+            // );
+            const results = await db.select()
+                .from(productsTable)
+                .where(and(
+                    or(
+                        like(productsTable.name, `%${q}%`),
+                        like(productsTable.description, `%${q}%`)
+                    ),
+                    eq(productsTable.isDeleted, false)
+                )).limit(10);
 
-    //         return res.json({
-    //             success: true,
-    //             count: results.length,
-    //             query: searchTerm,
-    //             data: results
-    //         });
-    //     } catch (error) {
-    //         console.error('Search error:', error);
-    //         return res.status(500).json({
-    //             success: false,
-    //             error: 'Search failed'
-    //         });
-    //     }
-    // }
+
+            return res.json({
+                success: true,
+                count: results.length,
+                query: q,
+                data: results
+            });
+
+        } catch (error) {
+            console.error('Search error:', error);
+            return res.status(500).json({
+                success: false,
+                error: 'Search failed'
+            });
+        }
+    }
 
     // // GET /items/stats - Get statistics
     // static getStats(req: Request, res: Response): Response {
