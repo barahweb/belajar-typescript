@@ -82,7 +82,7 @@ export class AuthController {
         }
     }
 
-    // Login user
+    // POST /api/auth/login - Login user // 
     static async login(req: Request, res: Response) {
         try {
             // Validate request
@@ -231,7 +231,7 @@ export class AuthController {
         }
     }
 
-    // Get current user profile
+    // GET /api/auth/profile - Get current user profile // 
     static async getProfile(req: Request, res: Response) {
         try {
             if (!req.user) {
@@ -440,8 +440,11 @@ export class AuthController {
         }
     }
 
-    // Check authentication status
+    // GET /api/auth/check - Check authentication status
     static async checkAuth(req: Request, res: Response) {
+        // res.json({
+        //     user: req.user
+        // });
         try {
             if (!req.user) {
                 return res.status(401).json({
