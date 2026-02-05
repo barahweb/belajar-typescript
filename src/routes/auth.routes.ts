@@ -8,7 +8,7 @@ const router = Router();
 router.post('/register', AuthController.register);
 router.post('/login', AuthController.login);
 router.post('/refresh-token', AuthController.refreshToken);
-router.get('/check', AuthController.checkAuth);
+router.get('/check', authenticate, AuthController.checkAuth);
 
 // Protected routes (require authentication)
 router.get('/profile', authenticate, AuthController.getProfile);
