@@ -1,7 +1,8 @@
 import express, { Request, Response, NextFunction } from 'express';
+
 import itemRoutes from './routes/item.routes';
+import authRoutes from './routes/auth.routes';
 import { drizzle } from 'drizzle-orm/node-postgres';
-import { usersTable } from './db/schema';
 const db = drizzle(process.env.DATABASE_URL!);
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,6 +18,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 // API Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/items', itemRoutes);
 
 // Root route - API Documentation

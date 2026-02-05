@@ -1,13 +1,12 @@
 import { integer, pgTable, varchar, timestamp, boolean } from "drizzle-orm/pg-core";
 import { getWIBTime } from '../utils/dateUtils';
 
-export const usersTable = pgTable("users", {
+const usersTable = pgTable("users", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     name: varchar({ length: 255 }).notNull(),
-    age: integer().notNull(),
     email: varchar({ length: 255 }).notNull().unique(),
     password: varchar('password').notNull(),
-    
+
     // Optional fields
     role: varchar('role', { length: 20 }).default('user'), // 'admin', 'user'
     isActive: boolean('is_active').default(true),
@@ -19,7 +18,7 @@ export const usersTable = pgTable("users", {
     updatedAt: timestamp('updated_at').defaultNow(),
 });
 
-export const productsTable = pgTable("products", {
+const productsTable = pgTable("products", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     name: varchar({ length: 255 }).notNull(),
     description: varchar({ length: 255 }),
@@ -38,3 +37,8 @@ export const productsTable = pgTable("products", {
     deletedAt: timestamp('deleted_at'),
 
 });
+
+export {
+    usersTable,
+    productsTable
+}

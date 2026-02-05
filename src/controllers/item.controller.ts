@@ -1,11 +1,11 @@
 import 'dotenv/config';
 import { Request, Response } from 'express';
 import { z, ZodError } from 'zod';
-import { drizzle } from 'drizzle-orm/node-postgres';
 import { desc, eq, asc, like, or, and } from 'drizzle-orm';
 import { productsTable, usersTable } from '../db/schema';
+import config from '../utils/config'
 
-const db = drizzle(process.env.DATABASE_URL!);
+const db = config.db
 
 import {
     itemSchema,
