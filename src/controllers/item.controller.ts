@@ -2,8 +2,9 @@ import 'dotenv/config';
 import { Request, Response } from 'express';
 import { z, ZodError } from 'zod';
 import { desc, eq, asc, like, or, and } from 'drizzle-orm';
-import { productsTable, usersTable } from '../db/schema';
+import { productsImagesTable, productsTable, usersTable } from '../db/schema';
 import config from '../utils/config'
+import { getFileUrl, deleteFile } from '../services/uploadService';
 
 const db = config.db
 
@@ -70,19 +71,49 @@ export class ItemController {
 
     // POST /items - Create new item
     static async createItem(req: Request, res: Response): Promise<Response> {
+        // return res.json({
+        //     image: req.file,
+        //     data: req.body
+        // })
+
         try {
             // Validate request body
             const validatedData: CreateItemDto = itemSchema.parse(req.body);
+            const file = req.file;
+            // return res.json({
+            //     filename: file?.originalname
+            // })
+
+            if (!file) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'No image uploaded'
+                });
+            }
 
             // Create new item
             const newItem = await db.insert(productsTable).values({
                 ...validatedData
             }).returning();
 
+            // Create a new image record
+            const newImage = await db.insert(productsImagesTable).values({
+                productId: newItem[0].id,
+                filename: file?.filename,
+                originalName: file?.originalname,
+                path: `uploads/products/${file?.filename}`,
+                url: getFileUrl(file?.filename),
+                size: file?.size,
+                mimeType: file?.mimetype,
+            }).returning();
+
             return res.status(201).json({
                 success: true,
                 message: 'Item created successfully',
-                data: newItem
+                data: {
+                    item: newItem,
+                    image: newImage
+                }
             });
 
         } catch (error) {
@@ -93,7 +124,7 @@ export class ItemController {
                     error: 'Validation failed',
                     details: error.issues.map(err => ({
                         field: err.path.join('.'),
-                        message: err.message
+                        message: err.message,
                     }))
                 });
             }

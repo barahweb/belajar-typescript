@@ -78,6 +78,13 @@
       "when": 1770186984808,
       "tag": "0010_good_susan_delgado",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1770903178555,
+      "tag": "0011_open_forge",
+      "breakpoints": true
     }
   ]
 }

@@ -23,8 +23,8 @@ export const itemSchema = z.object({
     category: z.enum(["electronics", "clothing", "books", "other"])
         .default("other"),
 
-    createdAt: z.date(),
-    updatedAt: z.date()
+    // createdAt: z.date(),
+    // updatedAt: z.date()
 });
 
 // TypeScript type from Zod schema
