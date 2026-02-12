@@ -84,23 +84,6 @@ app.listen(PORT, () => {
   📍 Network:  http://YOUR_IP:${PORT}
   
   📋 API Documentation: http://localhost:${PORT}
-  
-  🛒 Available Endpoints:
-     GET    /api/items           - Get all items
-     GET    /api/items/search    - Search items
-     GET    /api/items/stats     - Get statistics
-     GET    /api/items/:id       - Get single item
-     POST   /api/items           - Create item
-     PUT    /api/items/:id       - Update item
-     DELETE /api/items/:id       - Delete item
-  
-  🔧 Health Check: http://localhost:${PORT}/health
-  
-  💡 Test with curl:
-     curl http://localhost:${PORT}/api/items
-     curl -X POST http://localhost:${PORT}/api/items \\
-          -H "Content-Type: application/json" \\
-          -d '{"name":"New Item","price":49.99,"quantity":5}'
   `);
 });
 
